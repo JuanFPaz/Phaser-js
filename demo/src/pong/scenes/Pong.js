@@ -14,18 +14,19 @@ class Pong extends Phaser.Scene {
     gameState = {
         play: true,
     }
-    debugTxt = []
-    scoreTxt = []
+
+    // Cache el error:
+    debugTxt
+    scoreTxt
+    //
+
     game2P = false
     gameCPU = false
     constructor() {
         super('Pong')
-        console.log('Hola?')
     }
 
     init({ modo }) {
-        console.log(modo);
-
         if (modo === '2P') {
             this.game2P = true
             this.gameCPU = false
@@ -40,6 +41,10 @@ class Pong extends Phaser.Scene {
 
 
     create() {
+        // Cada vez que iniciamos this.scene.start
+        // Se vuelve a ejecutar los metodos de la escena, en este caso, create()
+        // Pero las propiedades como scoreTxt que es un arreglo, tiene las instancias de this.add.text de la primera escena instanciada
+        this.scoreTxt = []
         this.crearFondo(0, 0)
         this.playerUno = this.crearPaleta(20, 300)
         this.playerDos = this.crearPaleta(760, 300)
@@ -51,15 +56,20 @@ class Pong extends Phaser.Scene {
         this.crearColisiones(this.playerUno, this.pelota, this.manejadorColisionPelota)
         this.crearColisiones(this.playerDos, this.pelota, this.manejadorColisionPelota)
 
-        // this.mostrarVelocityPelota(this.debugTxt, this.pelota)
-        console.log(this.scoreTxt)
+        //Entonces Cuando llega aca, en mostrarScoreMatch(this.scoreTxt)
+        //Es cuando ocurre el error:
+        // Score Match lo que hace es agregar un nuevo elemento con push()
+        // Pero nosotros llamamos a cada elemento con sus indices 0 y 1
+        // pero las nuevas instancias se van a ir guardando en el 2 y 3, 4 y 5, etc etc, cada vez que llamemos denuevoa esta escena
         this.mostrarScoreMatch(this.scoreTxt)
+        //Por eso, en el create, seteamos a this.scoreTxt como un arreglo vacio, cada vez que se llame a esta escena.
+        //Fin.
         this.crearColisionWorldBounds()
 
         if (this.game2P) {
             this.crearControles(this.playerUnoMov, this.playerDosMov)
         } else if (this.gameCPU) {
-            this.scene.start('MainMenu','hola')
+            this.scene.start('MainMenu')
         }
 
         this.input.keyboard.on('keydown-ESC', (a) => {
@@ -141,10 +151,10 @@ class Pong extends Phaser.Scene {
     }
 
     mostrarScoreMatch(texto) {
-        if (texto.length < 2) {
-            texto.push(this.add.text(260, 30, `${this.score.playerUno}`, { fontSize: 100, fill: '#000000' }))
-            texto.push(this.add.text(420, 30, `${this.score.playerDos}`, { fontSize: 100, fill: '#000000' }))
-        }
+        // Lo cual es totalmente al pedo condicionar la longitud del arreglo, porque esta guardando una instancia de un Text
+        // de otra escena, o algo asi.
+        texto.push(this.add.text(260, 30, `${this.score.playerUno}`, { fontSize: 100, fill: '#000000' }))
+        texto.push(this.add.text(420, 30, `${this.score.playerDos}`, { fontSize: 100, fill: '#000000' }))
         texto[0].setFixedSize(120, 90).setColor('rgb(255,255,255)').setAlign('center')
         texto[1].setFixedSize(120, 90).setColor('rgb(255,255,255)').setAlign('center')
     }

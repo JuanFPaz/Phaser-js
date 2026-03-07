@@ -8,12 +8,12 @@ class MainMenu extends Phaser.Scene {
     ]
     creditos = [
         { text: `Basado en el juego desarrolado por Allan Alcorn y Atari ®` },
-        { text: `Codigos escritos por Juan Paz - 2026` }
+        { text: `Codigos por Juan Paz - 2026` }
     ]
 
     tituloTxt
-    menuTxt = []
-    creditosTxT = []
+    menuTxt
+    creditosTxT
     flecha
     indice
     posFlecha = [
@@ -27,28 +27,22 @@ class MainMenu extends Phaser.Scene {
         super('MainMenu')
     }
 
-    init(data) {
-        if(data === 'hola'){
-            console.log(data);
-            console.log('mandaron algo (de pong a mainmenu)')
-            console.log('Algo nos mandaron');
-            return
-        }
-    }
-
     create() {
+        //Explicacion de los cambios en PONG.JS
+        this.menuTxt = []
+        this.creditosTxT = []
         this.indice = 0
         this.add.image(0, 0, 'background').setOrigin(0, 0)
         this.flecha = this.add.image(this.posFlecha[this.indice].x, this.posFlecha[this.indice].y, 'flecha').setOrigin(1, 0.5)
         this.tituloTxt = this.add.text(100, 60, `${this.titulo.text}`, { fontSize: 210, color: 'rgb(255,255,255)' })
-        if (this.menuTxt.length < 2) {
-            this.menuTxt.push(this.add.text(300, 300, `${this.menu[0].text}`, { fontSize: 32, color: 'rgb(255, 255, 255)' }))
-            this.menuTxt.push(this.add.text(300, 360, `${this.menu[1].text}`, { fontSize: 32, color: 'rgb(255, 255, 255)' }))
-        }
-        if (this.creditosTxT.length < 2) {
-            this.creditosTxT.push(this.add.text(100, 510, `${this.creditos[0].text}`, { fontSize: 16, color: 'rgb(255,255,255)' }))
-            this.creditosTxT.push(this.add.text(100, 540, `${this.creditos[1].text}`, { fontSize: 16, color: 'rgb(255,255,255)' }))
-        }
+
+        this.menuTxt.push(this.add.text(300, 300, `${this.menu[0].text}`, { fontSize: 32, color: 'rgb(255, 255, 255)' }))
+        this.menuTxt.push(this.add.text(300, 360, `${this.menu[1].text}`, { fontSize: 32, color: 'rgb(255, 255, 255)' }))
+
+
+        this.creditosTxT.push(this.add.text(100, 510, `${this.creditos[0].text}`, { fontSize: 16, color: 'rgb(255,255,255)' }))
+        this.creditosTxT.push(this.add.text(100, 540, `${this.creditos[1].text}`, { fontSize: 16, color: 'rgb(255,255,255)' }))
+
         this.menuTxt[0].setAlign('center').setFixedSize(200, 30)
         this.menuTxt[1].setAlign('center').setFixedSize(200, 30)
         this.creditosTxT[0].setFixedSize(600, 30).setAlign('center')
