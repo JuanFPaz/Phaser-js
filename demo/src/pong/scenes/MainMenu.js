@@ -1,73 +1,150 @@
 import Phaser from "phaser";
 
 class MainMenu extends Phaser.Scene {
-    titulo = { text: 'PONG!' }
-    menu = [
-        { text: '1P  vs CPU', scene: 'Pong', data: { modo: 'CPU' } },
-        { text: '1P  vs  2P', scene: 'Pong', data: { modo: '2P' } }
-    ]
-    creditos = [
-        { text: `Basado en el juego desarrolado por Allan Alcorn y Atari ®` },
-        { text: `Codigos por Juan Paz - 2026` }
+    //Texto y sus configs
+    tituloConfig = {
+        text: 'PONG!',
+        position: { x: 100, y: 60 },
+        size: { w: 600, h: 180 },
+        style: { fontSize: 210, color: 'rgb(255,255,255)' },
+    }
+
+    menuConfig = [
+        {
+            text: '1P  vs CPU',
+            position: { x: 300, y: 300 },
+            size: { w: 200, h: 30 },
+            style: { fontSize: 32, color: 'rgb(255,255,255)' },
+            scene: 'Pong',
+            data: { modo: 'CPU' }
+        },
+        {
+            text: '1P  vs  2P',
+            position: { x: 300, y: 360 },
+            size: { w: 200, h: 30 },
+            style: { fontSize: 32, color: 'rgb(255,255,255)' },
+            scene: 'Pong',
+            data: { modo: '2P' }
+        }
     ]
 
+    creditosConfig = [
+        {
+            text: `Basado en el juego desarrolado por Allan Alcorn y Atari ®`,
+            position: { x: 100, y: 510 }, size: { w: 600, h: 30 },
+            style: { fontSize: 16, color: 'rgb(255,255,255)' }
+        },
+        {
+            text: `Codigos por Juan Paz - 2026`,
+            position: { x: 100, y: 540 },
+            size: { w: 600, h: 30 },
+            style: { fontSize: 16, color: 'rgb(255,255,255)' }
+        }
+    ]
+
+    flechaConfig = [
+        {
+            position: { x: 300, y: 315 }, key: 'flecha',
+        },
+        {
+            position: { x: 300, y: 375 }
+        }
+    ]
+    //Indice Global
+    indice
+
+    // Game Objects
     tituloTxt
     menuTxt
     creditosTxT
     flecha
-    indice
-    posFlecha = [
-        { x: 300, y: 315 },
-        { x: 300, y: 375 }
-    ]
 
-    debugIndice
-    debugParams
     constructor() {
         super('MainMenu')
     }
 
     create() {
-        //Explicacion de los cambios en PONG.JS
-        this.menuTxt = []
-        this.creditosTxT = []
+        this.establecerIndice()
+        this.crearGameObjectBackground()
+        this.flecha = this.crearGameObjectFlecha(this.flechaConfig[this.indice])
+        this.tituloTxt = this.crearGameObjectTitulo(this.tituloConfig)
+        this.menuTxt = this.crearGameObjectMenu(this.menuConfig)
+        this.creditosTxT = this.crearGameObjectCreditos(this.creditosConfig)
+        this.establecerTecladoGlobal(this.input.keyboard)
+    }
+
+    crearGameObjectFlecha({ position, key }) {
+        let { x, y } = position
+        let _key = key
+        let gameObject = this.add.image(x, y, _key)
+        gameObject.setOrigin(1, 0.5)
+        return gameObject
+    }
+
+    establecerIndice() {
         this.indice = 0
+    }
+
+    crearGameObjectBackground() {
         this.add.image(0, 0, 'background').setOrigin(0, 0)
-        this.flecha = this.add.image(this.posFlecha[this.indice].x, this.posFlecha[this.indice].y, 'flecha').setOrigin(1, 0.5)
-        this.tituloTxt = this.add.text(100, 60, `${this.titulo.text}`, { fontSize: 210, color: 'rgb(255,255,255)' })
+    }
 
-        this.menuTxt.push(this.add.text(300, 300, `${this.menu[0].text}`, { fontSize: 32, color: 'rgb(255, 255, 255)' }))
-        this.menuTxt.push(this.add.text(300, 360, `${this.menu[1].text}`, { fontSize: 32, color: 'rgb(255, 255, 255)' }))
+    crearGameObjectTitulo(unObjeto) {
+        return this.crearGameObjectText(unObjeto)
+    }
 
-
-        this.creditosTxT.push(this.add.text(100, 510, `${this.creditos[0].text}`, { fontSize: 16, color: 'rgb(255,255,255)' }))
-        this.creditosTxT.push(this.add.text(100, 540, `${this.creditos[1].text}`, { fontSize: 16, color: 'rgb(255,255,255)' }))
-
-        this.menuTxt[0].setAlign('center').setFixedSize(200, 30)
-        this.menuTxt[1].setAlign('center').setFixedSize(200, 30)
-        this.creditosTxT[0].setFixedSize(600, 30).setAlign('center')
-        this.creditosTxT[1].setFixedSize(600, 30).setAlign('center')
-        this.tituloTxt.setFixedSize(600, 180).setAlign('center')
-        this.debugIndice = this.add.text(0, 0, `Indice = ${this.indice}`)
-        this.add.grid(0, 0, 4000, 2000, 400, 300, 0x000000, 0, 0xffffff, 0.5).setOrigin(0, 0);
-        this.add.grid(0, 0, 4000, 2000, 100, 30, 0, 0, 0xff0000, 1).setOrigin(0, 0);
-        this.input.keyboard.on('keydown-S', () => {
-            let i = this.indice < this.posFlecha.length - 1 ? ++this.indice : --this.indice
-            this.debugIndice.setText(`Indice = ${this.indice}`)
-            this.flecha.setPosition(this.posFlecha[i].x, this.posFlecha[i].y)
-        })
-
-        this.input.keyboard.on('keydown-W', () => {
-            let i = this.indice === 0 ? ++this.indice : --this.indice
-            this.debugIndice.setText(`Indice = ${this.indice}`)
-            this.flecha.setPosition(this.posFlecha[i].x, this.posFlecha[i].y)
-        })
-
-        this.input.keyboard.on('keydown-ENTER', () => {
-            this.scene.start(this.menu[this.indice].scene, this.menu[this.indice].data)
+    crearGameObjectMenu(unObjeto) {
+        return unObjeto.map((obj) => {
+            return this.crearGameObjectText(obj)
         })
     }
 
+    crearGameObjectCreditos(unObjeto) {
+        return unObjeto.map((obj) => {
+            return this.crearGameObjectText(obj)
+        })
+    }
+
+    establecerTecladoGlobal(teclado) {
+        teclado.on('keydown-S', () => {
+            let i = this.indice < this.flechaConfig.length - 1 ? ++this.indice : --this.indice
+            let { x, y } = this.flechaConfig[i].position
+            this.flecha.setPosition(x, y)
+        })
+
+        teclado.on('keydown-W', () => {
+            let i = this.indice === 0 ? ++this.indice : --this.indice
+            let { x, y } = this.flechaConfig[i].position
+            this.flecha.setPosition(x, y)
+        })
+
+        teclado.on('keydown-ENTER', () => {
+            let i = this.indice
+            let scene = this.menuConfig[i].scene
+            let data = this.menuConfig[i].data
+            this.scene.start(scene, data)
+        })
+
+        // this.mostrarGrid(teclado)
+    }
+
+    crearGameObjectText({ text, position, size, style }) {
+        let texto = text
+        let { x, y } = position
+        let { w, h } = size
+        let _style = style
+        let gameObject = this.add.text(x, y, texto, _style)
+        gameObject.setFixedSize(w, h)
+        gameObject.setAlign('center')
+
+        return gameObject
+    }
+
+    mostrarGrid(teclado) {
+        teclado.on('keydown-F', () => {
+            this.add.grid(0, 0, 800, 600, 100, 30, 0, 0, 0xff0000, 1).setOrigin(0, 0);
+        })
+    }
 }
 
 export default MainMenu
