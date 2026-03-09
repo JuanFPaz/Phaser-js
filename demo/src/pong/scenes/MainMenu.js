@@ -105,20 +105,27 @@ class MainMenu extends Phaser.Scene {
         })
     }
 
-    establecerTecladoGlobal(teclado) {
-        teclado.on('keydown-S', () => {
+    establecerTecladoGlobal() {
+
+        this.input.keyboard.on('keydown-S', () => {
             let i = this.indice < this.flechaConfig.length - 1 ? ++this.indice : --this.indice
             let { x, y } = this.flechaConfig[i].position
             this.flecha.setPosition(x, y)
         })
 
-        teclado.on('keydown-W', () => {
+        this.input.keyboard.on('keydown-W', () => {
             let i = this.indice === 0 ? ++this.indice : --this.indice
             let { x, y } = this.flechaConfig[i].position
             this.flecha.setPosition(x, y)
         })
+        this.input.keyboard.on('keydown', (asd) => {
+            console.log(asd);
 
-        teclado.on('keydown-ENTER', () => {
+            console.log(asd.key, asd.keyCode);
+
+
+        })
+        this.input.keyboard.on('keydown-ENTER', () => {
             let i = this.indice
             let scene = this.menuConfig[i].scene
             let data = this.menuConfig[i].data
